@@ -1,36 +1,41 @@
-import { FeedbackOptions } from './FeedbackOptions/FeedbackOptions';
-import { Statistics } from './Statistics/Statistics';
-import { Section } from './Section/Section';
-import { Notification } from './Notification/Notification';
+import { ContactsList } from './ContactsList/ContactsList';
+import { Form } from './Form/Form';
+import { Filter } from './Filter/Filter';
+// import { Notification } from './Notification/Notification';
 
 import React, { Component } from 'react';
 
 export class App extends Component {
   state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
+    contacts: [
+      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+    ],
+    filter: '',
   };
 
-  feedbankAmountHandler = option => {
-    this.setState(prevState => {
-      return {
-        [option]: prevState[option] + 1,
-      };
-    });
+  handleAddContact = contactData => {
+    const hasDuplicates = this.state.contacts.some(
+      contact => contact.name === contactData.name
+    );
+
+    if (hasDuplicates) {
+      alert(`${contactData.name} is already in contacts.`);
+      return;
+    }
+
+    this.setState(prevState => ({
+      contacts: [contactData, ...prevState.contacts],
+    }));
   };
 
-  countTotalFeedback = () => {
-    return this.state.good + this.state.neutral + this.state.bad;
-  };
-
-  countPositiveFeedbackPercentage = () => {
-    return Math.round((this.state.good / this.countTotalFeedback()) * 100);
+  onChangeFilterHandler = e => {
+    this.setState({ filter: e.currentTarget.value });
   };
 
   render() {
-    const { good, neutral, bad } = this.state;
-
     return (
       <div
         style={{
@@ -38,25 +43,14 @@ export class App extends Component {
           color: '#010101',
         }}
       >
-        <Section title="Please leave feedback">
-          <FeedbackOptions
-            onLeaveFeedback={this.feedbankAmountHandler}
-            options={Object.keys(this.state)}
-          />
-        </Section>
-        <Section title="Statistics">
-          {this.countTotalFeedback() === 0 ? (
-            <Notification message="There is no feedback" />
-          ) : (
-            <Statistics
-              goodCount={good}
-              neutralCount={neutral}
-              badCount={bad}
-              total={this.countTotalFeedback}
-              positivePerc={this.countPositiveFeedbackPercentage}
-            />
-          )}
-        </Section>
+        <h1>Phonebook</h1>
+        <Form handleAddContact={this.handleAddContact} />
+        <h2>Contacts</h2>
+        <Filter
+          fliterValue={this.state.filter}
+          onChangeFilterHandler={this.onChangeFilterHandler}
+        />
+        <ContactsList contacts={this.state.contacts} />
       </div>
     );
   }
