@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { FormWrap } from './Form.styled';
+import { FormWrap } from './ContactForm.styled';
 import React, { Component } from 'react';
 
 // submitHandler = e => {
@@ -22,6 +22,11 @@ export class Form extends Component {
     };
 
     this.props.handleAddContact(contactData);
+
+    this.setState({
+      name: '',
+      number: '',
+    });
   };
 
   inputChangeHandler = e => {

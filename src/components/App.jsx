@@ -1,24 +1,20 @@
 import { ContactsList } from './ContactsList/ContactsList';
-import { Form } from './Form/Form';
+import { Form } from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
-// import { Notification } from './Notification/Notification';
 
 import React, { Component } from 'react';
 
 export class App extends Component {
   state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: [],
     filter: '',
   };
 
   handleAddContact = contactData => {
     const hasDuplicates = this.state.contacts.some(
-      contact => contact.name === contactData.name
+      contact =>
+        contact.name.toLocaleLowerCase() ===
+        contactData.name.toLocaleLowerCase()
     );
 
     if (hasDuplicates) {
@@ -31,11 +27,22 @@ export class App extends Component {
     }));
   };
 
+  handleDeleteContact = contactId => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
+    }));
+  };
+
   onChangeFilterHandler = e => {
     this.setState({ filter: e.currentTarget.value });
   };
 
   render() {
+    const normalizedFilter = this.state.filter.toLowerCase();
+    const filteredContacts = this.state.contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter)
+    );
+
     return (
       <div
         style={{
@@ -50,7 +57,10 @@ export class App extends Component {
           fliterValue={this.state.filter}
           onChangeFilterHandler={this.onChangeFilterHandler}
         />
-        <ContactsList contacts={this.state.contacts} />
+        <ContactsList
+          contacts={filteredContacts}
+          handleDeleteContact={this.handleDeleteContact}
+        />
       </div>
     );
   }

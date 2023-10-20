@@ -1,13 +1,16 @@
 import { ContactsListWrap } from './ContactsList.styled';
+import { Contact } from '../Contact/Contact';
 
-export const ContactsList = props => {
+export const ContactsList = ({ handleDeleteContact, contacts }) => {
   return (
     <ContactsListWrap>
-      {props.contacts.map(contact => {
+      {contacts.map(contact => {
         return (
-          <li key={contact.id}>
-            {contact.name}: {contact.number}
-          </li>
+          <Contact
+            key={contact.id}
+            contact={contact}
+            handleDeleteContact={handleDeleteContact}
+          />
         );
       })}
     </ContactsListWrap>
