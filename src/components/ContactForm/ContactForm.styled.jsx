@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
+import { Form } from 'formik';
 
-export const FormWrap = styled.form`
+export const FormWrap = styled(Form)`
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -18,7 +19,7 @@ export const FormWrap = styled.form`
     margin-bottom: 10px;
   }
 
-  input {
+  Field {
     border: 1px solid #b2b2b2;
     border-radius: 4px;
     padding: 3px;

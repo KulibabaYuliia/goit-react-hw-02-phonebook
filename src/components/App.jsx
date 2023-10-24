@@ -1,8 +1,9 @@
 import { ContactsList } from './ContactsList/ContactsList';
-import { Form } from './ContactForm/ContactForm';
+import { ContactForm } from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
 
 import React, { Component } from 'react';
+import { nanoid } from 'nanoid';
 
 export class App extends Component {
   state = {
@@ -22,8 +23,11 @@ export class App extends Component {
       return;
     }
 
+    contactData.id = nanoid();
     this.setState(prevState => ({
-      contacts: [contactData, ...prevState.contacts],
+      contacts: [contactData, ...prevState.contacts].sort((a, b) =>
+        a.name.localeCompare(b.name)
+      ),
     }));
   };
 
@@ -51,7 +55,7 @@ export class App extends Component {
         }}
       >
         <h1>Phonebook</h1>
-        <Form handleAddContact={this.handleAddContact} />
+        <ContactForm handleAddContact={this.handleAddContact} />
         <h2>Contacts</h2>
         <Filter
           fliterValue={this.state.filter}

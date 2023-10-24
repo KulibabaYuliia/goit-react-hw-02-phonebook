@@ -1,66 +1,50 @@
-import { nanoid } from 'nanoid';
 import { FormWrap } from './ContactForm.styled';
 import React, { Component } from 'react';
+import { Formik, Field, ErrorMessage } from 'formik';
+import * as yup from 'yup';
 
-// submitHandler = e => {
-//   e.preventDefault();
-// };
+const phoneRegExp = /[0-9]{3}-[0-9]{2}-[0-9]{2}/;
+const nameRegExp = /^[a-zA-Zа-яА-Я]+(([' ][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$/;
 
-export class Form extends Component {
-  state = {
-    name: '',
-    number: '',
-  };
+let userSchema = yup.object().shape({
+  name: yup
+    .string('Name is not valid')
+    .matches(nameRegExp, 'Name is not valid')
+    .required(),
+  number: yup
+    .string('Phone number is not valid')
+    .matches(phoneRegExp, 'Phone number is not valid')
+    .required(),
+});
 
-  submitHandler = e => {
-    e.preventDefault();
-
-    const contactData = {
-      name: this.state.name,
-      number: this.state.number,
-      id: nanoid(),
-    };
-
-    this.props.handleAddContact(contactData);
-
-    this.setState({
-      name: '',
-      number: '',
-    });
-  };
-
-  inputChangeHandler = e => {
-    this.setState({ [e.target.name]: e.target.value });
+export class ContactForm extends Component {
+  submitHandler = (values, action) => {
+    console.log(values);
+    this.props.handleAddContact(values);
+    action.resetForm();
   };
 
   render() {
     return (
-      <FormWrap onSubmit={this.submitHandler}>
-        <label>
-          Name
-          <input
-            type="text"
-            name="name"
-            // pattern="^[a-zA-Zа-яА-Я]+(([' \\-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-            value={this.state.name}
-            onChange={this.inputChangeHandler}
-            required
-          />
-        </label>
-        <label>
-          Number
-          <input
-            type="tel"
-            name="number"
-            pattern="[0-9]{3}-[0-9]{2}-[0-9]{2}"
-            placeholder="123-45-67"
-            value={this.state.number}
-            onChange={this.inputChangeHandler}
-            required
-          />
-        </label>
-        <button type="submit">Add contact</button>
-      </FormWrap>
+      <Formik
+        initialValues={{ name: '', number: '' }}
+        validationSchema={userSchema}
+        onSubmit={this.submitHandler}
+      >
+        <FormWrap>
+          <label>
+            Name
+            <Field type="text" name="name" />
+            <ErrorMessage name="name" component="div" />
+          </label>
+          <label>
+            Number
+            <Field type="tel" name="number" placeholder="123-45-67" />
+            <ErrorMessage name="number" component="div" />
+          </label>
+          <button type="submit">Add contact</button>
+        </FormWrap>
+      </Formik>
     );
   }
 }
